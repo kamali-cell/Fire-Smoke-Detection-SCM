@@ -1,0 +1,133 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: white;
+}
+
+.header {
+    background: #1e293b;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.status {
+    color: #22c55e;
+}
+
+.container {
+    padding: 40px;
+}
+
+.welcome {
+    margin-bottom: 30px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.card {
+    background: #1e293b;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+.number {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.safe {
+    color: #22c55e;
+}
+
+.warning {
+    color: #facc15;
+}
+
+.danger {
+    color: #ef4444;
+}
+
+button {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #dc2626;
+}
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-box {
+    width: 350px;
+    background: #1e293b;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.login-box h1 {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.login-box h2 {
+    margin-bottom: 5px;
+}
+
+.login-box p {
+    color: #94a3b8;
+    margin-bottom: 30px;
+}
+
+.login-box form {
+    text-align: left;
+}
+
+.login-box label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 8px;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 8px;
+    background: #334155;
+    color: white;
+    outline: none;
+}
+
+.login-box button {
+    width: 100%;
+    margin-top: 25px;
+}

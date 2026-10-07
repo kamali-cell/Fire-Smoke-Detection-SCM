@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Fire & Smoke Detection - SCM Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #101820;
+            color: white;
+        }
+
+        .header {
+            background: #18232e;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #ff5722;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            color: #bfc7ce;
+        }
+
+        .container {
+            width: 92%;
+            margin: 25px auto;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: #18232e;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h3 {
+            color: #d8e0e7;
+        }
+
+        .number {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .safe {
+            color: #4caf50;
+        }
+
+        .danger {
+            color: #ff5252;
+        }
+
+        .message {
+            color: #c7cdd2;
+        }
+
+        .controls,
+        .camera,
+        .latest,
+        .history-section,
+        .change-section,
+        .version-section {
+            background: #18232e;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 13px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .fire-btn {
+            background: #e53935;
+            color: white;
+        }
+
+        .smoke-btn {
+            background: #757575;
+            color: white;
+        }
+
+        .reset-btn {
+            background: #2e7d32;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .camera-box {
+            height: 250px;
+            background: #080c10;
+            border: 2px dashed #59636d;
+            border-radius: 10px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #9ba4ad;
+            font-size: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            min-width: 700px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #3a4650;
+            text-align: left;
+        }
+
+        th {
+            background: #263440;
+        }
+
+        td {
+            color: #d8dfe5;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #8d98a3;
+        }
+
+        @media (max-width: 800px) {
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                width: 95%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="header">
+
+        <h1>🔥 Fire & Smoke Detection System</h1>
+
+        <p>
+            Software Configuration Management Monitoring Dashboard
+        </p>
+
+    </header>
+
+
+    <div class="container">
+
+
+        <!-- ================= STATUS CARDS ================= -->
+
+        <section class="cards">
+
+            <div class="card">
+
+                <h3>🔥 Fire Status</h3>
+
+                <div id="fireStatus" class="number safe">
+                    SAFE
+                </div>
+
+                <p id="fireMessage" class="message">
+                    No fire detected
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>💨 Smoke Status</h3>
+
+                <div id="smokeStatus" class="number safe">
+                    SAFE
+                </div>
+
+                <p id="smokeMessage" class="message">
+                    No smoke detected
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>🚨 Alerts</h3>
+
+                <div id="alertCount" class="number">
+                    0
+                </div>
+
+                <p class="message">
+                    Active alerts
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= DETECTION CONTROLS ================= -->
+
+        <section class="controls">
+
+            <h2>🎛 Detection Controls</h2>
+
+            <div class="buttons">
+
+                <button
+                    class="fire-btn"
+                    onclick="detectFire()">
+                    🔥 Simulate Fire
+                </button>
+
+                <button
+                    class="smoke-btn"
+                    onclick="detectSmoke()">
+                    💨 Simulate Smoke
+                </button>
+
+                <button
+                    class="reset-btn"
+                    onclick="resetSystem()">
+                    🔄 Reset System
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= CAMERA ================= -->
+
+        <section class="camera">
+
+            <h2>📷 Camera Monitoring</h2>
+
+            <div class="camera-box">
+                Live Camera / Detection Feed
+            </div>
+
+        </section>
+
+
+        <!-- ================= LATEST DETECTION ================= -->
+
+        <section class="latest">
+
+            <h2>⚡ Latest Detection</h2>
+
+            <p id="latestDetection">
+                No detection recorded.
+            </p>
+
+        </section>
+
+
+        <!-- ================= DETECTION HISTORY ================= -->
+
+        <section class="history-section">
+
+            <h2>📋 Detection History</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Detection Type</th>
+                        <th>Date & Time</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="detectionTableBody">
+
+                    <tr>
+                        <td colspan="4">
+                            Loading detection history...
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <!-- ================= SCM CHANGE REQUESTS ================= -->
+
+        <section class="change-section">
+
+            <h2>🔧 SCM Change Requests</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Date & Time</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="changeRequestBody">
+
+                    <tr>
+                        <td colspan="6">
+                            Loading change requests...
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <!-- ================= CONFIGURATION ITEMS ================= -->
+
+        <section class="change-section">
+
+            <h2>📦 Configuration Item Management</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Configuration Item</th>
+                        <th>Type</th>
+                        <th>Version</th>
+                        <th>Status</th>
+                        <th>Owner</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="configurationItemBody">
+
+                    <tr>
+                        <td colspan="6">
+                            Loading configuration items...
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <!-- ================= VERSION CONTROL ================= -->
+
+        <section class="version-section">
+
+            <h2>🔄 Version Control & Baseline Management</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Version</th>
+                        <th>Configuration Item</th>
+                        <th>Change</th>
+                        <th>Status</th>
+                        <th>Baseline</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>v1.0</td>
+                        <td>Fire Detection Module</td>
+                        <td>Initial release</td>
+                        <td>Active</td>
+                        <td>Baseline 1</td>
+                    </tr>
+
+                    <tr>
+                        <td>v1.0</td>
+                        <td>Smoke Detection Module</td>
+                        <td>Initial release</td>
+                        <td>Active</td>
+                        <td>Baseline 1</td>
+                    </tr>
+
+                    <tr>
+                        <td>v1.1</td>
+                        <td>SCM Dashboard</td>
+                        <td>Dashboard enhancement</td>
+                        <td>Active</td>
+                        <td>Baseline 2</td>
+                    </tr>
+
+                    <tr>
+                        <td>v1.1</td>
+                        <td>Fire-Smoke Database</td>
+                        <td>Detection history added</td>
+                        <td>Active</td>
+                        <td>Baseline 2</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <!-- ================= RELEASE MANAGEMENT ================= -->
+
+        <section class="version-section">
+
+            <h2>🚀 Release Management</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Release ID</th>
+                        <th>Version</th>
+                        <th>Release Name</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>REL-001</td>
+                        <td>v1.0</td>
+                        <td>Initial Fire & Smoke System</td>
+                        <td>2026-10-01</td>
+                        <td>Released</td>
+                    </tr>
+
+                    <tr>
+                        <td>REL-002</td>
+                        <td>v1.1</td>
+                        <td>SCM Dashboard Update</td>
+                        <td>2026-10-07</td>
+                        <td>Released</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <!-- ================= CHANGE CONTROL BOARD ================= -->
+
+        <section class="version-section">
+
+            <h2>👥 Change Control Board (CCB)</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Member</th>
+                        <th>Role</th>
+                        <th>Responsibility</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>SCM Manager</td>
+                        <td>Approval</td>
+                        <td>Approves or rejects major changes</td>
+                    </tr>
+
+                    <tr>
+                        <td>Developer</td>
+                        <td>Implementation</td>
+                        <td>Implements approved changes</td>
+                    </tr>
+
+                    <tr>
+                        <td>Tester</td>
+                        <td>Verification</td>
+                        <td>Tests the changed system</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <!-- ================= SCM AUDIT LOG ================= -->
+
+        <section class="version-section">
+
+            <h2>📝 SCM Audit Log</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Time</th>
+                        <th>Activity</th>
+                        <th>User</th>
+                        <th>Result</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>10:15 AM</td>
+                        <td>Fire Detection Tested</td>
+                        <td>Admin</td>
+                        <td>Successful</td>
+                    </tr>
+
+                    <tr>
+                        <td>10:20 AM</td>
+                        <td>Smoke Detection Tested</td>
+                        <td>Admin</td>
+                        <td>Successful</td>
+                    </tr>
+
+                    <tr>
+                        <td>10:30 AM</td>
+                        <td>Configuration Baseline Created</td>
+                        <td>SCM Manager</td>
+                        <td>Approved</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+    </div>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="footer">
+
+        Fire & Smoke Detection System | SCM Project
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

@@ -1,29 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 
-    <title>Login - Fire & Smoke Detection</title>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Fire & Smoke Detection - Login</title>
 
     <link rel="stylesheet" href="style.css">
 
 </head>
 
-<body>
+<body class="login-page">
 
     <div class="login-container">
 
         <div class="login-box">
 
-            <h1>🔥</h1>
+            <h1>🔥 Fire & Smoke</h1>
 
-            <h2>Fire & Smoke Detection</h2>
+            <h2>SCM Monitoring System</h2>
 
-            <p>SCM Monitoring System</p>
+            <p class="login-subtitle">
+                Secure Login
+            </p>
 
             <form onsubmit="loginUser(); return false;">
 
-                <label>Username</label>
+                <label for="username">
+                    Username
+                </label>
 
                 <input
                     type="text"
@@ -32,7 +40,9 @@
                     required
                 >
 
-                <label>Password</label>
+                <label for="password">
+                    Password
+                </label>
 
                 <input
                     type="password"
@@ -46,6 +56,12 @@
                 </button>
 
             </form>
+
+            <p class="login-info">
+                Demo Username: admin
+                <br>
+                Demo Password: admin123
+            </p>
 
         </div>
 

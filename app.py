@@ -5,10 +5,18 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+# ==========================================
+# PATHS
+# ==========================================
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend")
 DATABASE = os.path.join(BASE_DIR, "fire_smoke.db")
 
+
+# ==========================================
+# DATABASE SETUP
+# ==========================================
 
 def create_database():
 
@@ -49,15 +57,40 @@ def create_database():
     )
     """)
 
-    # Insert 4 Configuration Items
-    items = [
-        ("Fire Detection Module", "Software", "v1.0", "Active", "SCM Team"),
-        ("Smoke Detection Module", "Software", "v1.0", "Active", "SCM Team"),
-        ("SCM Dashboard", "Web Module", "v1.0", "Active", "SCM Team"),
-        ("Fire-Smoke Database", "Database", "v1.0", "Active", "SCM Team")
+    # Default Configuration Items
+    configuration_items = [
+        (
+            "Fire Detection Module",
+            "Software",
+            "v1.0",
+            "Active",
+            "SCM Team"
+        ),
+        (
+            "Smoke Detection Module",
+            "Software",
+            "v1.0",
+            "Active",
+            "SCM Team"
+        ),
+        (
+            "SCM Dashboard",
+            "Web Module",
+            "v1.0",
+            "Active",
+            "SCM Team"
+        ),
+        (
+            "Fire-Smoke Database",
+            "Database",
+            "v1.0",
+            "Active",
+            "SCM Team"
+        )
     ]
 
-    for item in items:
+    for item in configuration_items:
+
         cursor.execute("""
         INSERT OR IGNORE INTO configuration_items
         (item_name, item_type, version, status, owner)
@@ -71,31 +104,50 @@ def create_database():
 create_database()
 
 
+# ==========================================
+# LOGIN PAGE
+# ==========================================
+
 @app.route("/")
 def home():
     return send_from_directory(FRONTEND_DIR, "login.html")
 
+
+# ==========================================
+# DASHBOARD
+# ==========================================
 
 @app.route("/dashboard")
 def dashboard():
     return send_from_directory(FRONTEND_DIR, "index.html")
 
 
+# ==========================================
+# FRONTEND FILES
+# ==========================================
+
 @app.route("/<path:filename>")
 def frontend_files(filename):
     return send_from_directory(FRONTEND_DIR, filename)
 
 
+# ==========================================
+# FIRE / SMOKE DETECTION
+# ==========================================
+
 @app.route("/add-detection/<detection_type>")
 def add_detection(detection_type):
+
+    if detection_type not in ["fire", "smoke"]:
+        return "Invalid detection type", 400
 
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
     cursor.execute("""
-    INSERT INTO detections
-    (detection_type, detection_time, status)
-    VALUES (?, ?, ?)
+        INSERT INTO detections
+        (detection_type, detection_time, status)
+        VALUES (?, ?, ?)
     """, (
         detection_type,
         datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -108,6 +160,10 @@ def add_detection(detection_type):
     return "Detection saved successfully!"
 
 
+# ==========================================
+# GET DETECTION HISTORY
+# ==========================================
+
 @app.route("/api/detections")
 def get_detections():
 
@@ -115,24 +171,31 @@ def get_detections():
     cursor = connection.cursor()
 
     cursor.execute("""
-    SELECT id, detection_type, detection_time, status
-    FROM detections
-    ORDER BY id DESC
+        SELECT id, detection_type, detection_time, status
+        FROM detections
+        ORDER BY id DESC
     """)
 
     records = cursor.fetchall()
     connection.close()
 
-    return jsonify([
-        {
-            "id": r[0],
-            "type": r[1],
-            "time": r[2],
-            "status": r[3]
-        }
-        for r in records
-    ])
+    detections = []
 
+    for record in records:
+
+        detections.append({
+            "id": record[0],
+            "type": record[1],
+            "time": record[2],
+            "status": record[3]
+        })
+
+    return jsonify(detections)
+
+
+# ==========================================
+# ADD SCM CHANGE REQUEST
+# ==========================================
 
 @app.route("/add-change-request")
 def add_change_request():
@@ -141,9 +204,9 @@ def add_change_request():
     cursor = connection.cursor()
 
     cursor.execute("""
-    INSERT INTO change_requests
-    (title, description, priority, status, created_time)
-    VALUES (?, ?, ?, ?, ?)
+        INSERT INTO change_requests
+        (title, description, priority, status, created_time)
+        VALUES (?, ?, ?, ?, ?)
     """, (
         "Update Fire Detection",
         "Improve fire detection sensitivity",
@@ -158,6 +221,10 @@ def add_change_request():
     return "Change Request Added Successfully!"
 
 
+# ==========================================
+# GET SCM CHANGE REQUESTS
+# ==========================================
+
 @app.route("/api/change-requests")
 def get_change_requests():
 
@@ -165,26 +232,33 @@ def get_change_requests():
     cursor = connection.cursor()
 
     cursor.execute("""
-    SELECT id, title, description, priority, status, created_time
-    FROM change_requests
-    ORDER BY id DESC
+        SELECT id, title, description, priority, status, created_time
+        FROM change_requests
+        ORDER BY id DESC
     """)
 
     records = cursor.fetchall()
     connection.close()
 
-    return jsonify([
-        {
-            "id": r[0],
-            "title": r[1],
-            "description": r[2],
-            "priority": r[3],
-            "status": r[4],
-            "time": r[5]
-        }
-        for r in records
-    ])
+    requests = []
 
+    for record in records:
+
+        requests.append({
+            "id": record[0],
+            "title": record[1],
+            "description": record[2],
+            "priority": record[3],
+            "status": record[4],
+            "time": record[5]
+        })
+
+    return jsonify(requests)
+
+
+# ==========================================
+# GET CONFIGURATION ITEMS
+# ==========================================
 
 @app.route("/api/configuration-items")
 def get_configuration_items():
@@ -193,26 +267,71 @@ def get_configuration_items():
     cursor = connection.cursor()
 
     cursor.execute("""
-    SELECT id, item_name, item_type, version, status, owner
-    FROM configuration_items
-    ORDER BY id
+        SELECT id, item_name, item_type, version, status, owner
+        FROM configuration_items
+        ORDER BY id
     """)
 
     records = cursor.fetchall()
     connection.close()
 
-    return jsonify([
-        {
-            "id": r[0],
-            "name": r[1],
-            "type": r[2],
-            "version": r[3],
-            "status": r[4],
-            "owner": r[5]
-        }
-        for r in records
-    ])
+    items = []
 
+    for record in records:
+
+        items.append({
+            "id": record[0],
+            "name": record[1],
+            "type": record[2],
+            "version": record[3],
+            "status": record[4],
+            "owner": record[5]
+        })
+
+    return jsonify(items)
+
+
+# ==========================================
+# TEST DETECTION DATABASE
+# ==========================================
+
+@app.route("/test-database")
+def test_database():
+
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT * FROM detections")
+
+    data = cursor.fetchall()
+
+    connection.close()
+
+    return str(data)
+
+
+# ==========================================
+# TEST CHANGE REQUESTS
+# ==========================================
+
+@app.route("/test-change-requests")
+def test_change_requests():
+
+    connection = sqlite3.connect(DATABASE)
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT * FROM change_requests")
+
+    data = cursor.fetchall()
+
+    connection.close()
+
+    return str(data)
+
+
+# ==========================================
+# START FLASK
+# ==========================================
 
 if __name__ == "__main__":
     app.run(debug=True)
